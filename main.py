@@ -1,7 +1,7 @@
 from customtkinter import *
 from tkinter import *
 from tkinter import ttk
-import sqlite3
+import mysql.connector
 
 janela = CTk()
 
@@ -12,23 +12,18 @@ class Funcs():
         self.entr_tel.delete(0, END)
         self.entr_cidade.delete(0, END)
     def conecta_bd(self):
-        self.conn = sqlite3.connect("clientes.bd")
+        self.conn = mysql.connector.connect(
+
+        host='',
+        user='',
+        password='',
+        database='clientes',
+        )
+
         self.cursor = self.conn.cursor(); print("Conectando ao Banco de Dados...")
     def desconecta_bd(self):
         self.conn.close(); print("Banco de Dados desconectado...")
-    def monta_tabelas(self):
-        self.conecta_bd();
-        ### criando tabela
-        self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS clientes (
-                cod INTEGER PRIMARY KEY,
-                nome_cliente VARCHAR (40) NOT NULL,
-                telefone INTEGER (11),
-                cidade VARCHAR (20)
-            
-        );""")
-        self.conn.commit(); print("Banco de Dados criado!")
-        self.desconecta_bd()
+    
     def variaveis(self):
         self.codigo = self.entr_codigo.get()
         self.nome = self.entr_nome.get()
@@ -51,16 +46,16 @@ class Funcs():
         self.conecta_bd()
 
         self.cursor.execute("""INSERT INTO clientes (nome_cliente, telefone, cidade)
-                            VALUES (?, ?, ?)""", (self.nome, self.tel, self.cidade))
+                            VALUES (%s, %s, %s)""", (self.nome, self.tel, self.cidade))
         self.conn.commit()
         self.desconecta_bd()
         self.select_lista()
-        self.limpa_tela
+        self.limpa_tela()
     def altera_cliente(self):
         self.variaveis()
         self.conecta_bd()
-        self.cursor.execute(""" UPDATE clientes SET nome_cliente = ?, telefone = ?, cidade = ?
-                            WHERE cod = ? """, (self.nome, self.tel, self.cidade, self.codigo))
+        self.cursor.execute(""" UPDATE clientes SET nome_cliente = %s, telefone = %s, cidade = %s
+                            WHERE cod = %s """, (self.nome, self.tel, self.cidade, self.codigo))
         self.conn.commit()
         self.desconecta_bd()
         self.select_lista()
@@ -70,7 +65,7 @@ class Funcs():
     def deleta_cliente(self):
         self.variaveis()
         self.conecta_bd()
-        self.cursor.execute("""DELETE FROM clientes WHERE cod = ? ;""", [self.codigo])
+        self.cursor.execute("""DELETE FROM clientes WHERE cod = %s ;""", [self.codigo])
         self.conn.commit() 
         self.desconecta_bd()
         self.limpa_tela()
@@ -81,8 +76,9 @@ class Funcs():
         self.conecta_bd()
         lista = self.cursor.execute("""SELECT cod, nome_cliente, telefone, cidade FROM clientes
                                     ORDER BY nome_cliente ASC; """)
-        for i in lista:
-            self.lista_cli.insert("", END, values=i)
+        #for i in lista:
+        #    self.lista_cli.insert("", END, values=i)
+
         self.desconecta_bd()
     def buscar_cliente(self):
         self.conecta_bd()
@@ -108,7 +104,6 @@ class Aplication(Funcs):
         self.frames_Da_tela()     # chama os frames
         self.widgets_frame1()
         self.lista_frame2()
-        self.monta_tabelas()
         self.select_lista()
         self.Menus()
         janela.mainloop()          # mantem  a janela aberta
