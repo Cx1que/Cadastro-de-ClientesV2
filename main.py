@@ -16,13 +16,13 @@ class Funcs():
 
         host='localhost',
         user='root',
-        password='',
+        password='caique123',
         database='clientes',
         )
 
         self.cursor = self.conn.cursor(); print("Conectando ao Banco de Dados...")
     def desconecta_bd(self):
-        self.conn.close(); print("Banco de Dados desconectado...")
+        self.conn.close(); print("Alteração Concluida!")
     
     def variaveis(self):
         self.codigo = self.entr_codigo.get()
