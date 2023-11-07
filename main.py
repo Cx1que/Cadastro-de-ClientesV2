@@ -14,8 +14,8 @@ class Funcs():
     def conecta_bd(self):
         self.conn = mysql.connector.connect(
 
-        host='',
-        user='',
+        host='localhost',
+        user='root',
         password='',
         database='clientes',
         )
@@ -76,8 +76,8 @@ class Funcs():
         self.conecta_bd()
         lista = self.cursor.execute("""SELECT cod, nome_cliente, telefone, cidade FROM clientes
                                     ORDER BY nome_cliente ASC; """)
-        #for i in lista:
-        #    self.lista_cli.insert("", END, values=i)
+        for i in self.cursor:
+            self.lista_cli.insert("", END, values=i)
 
         self.desconecta_bd()
     def buscar_cliente(self):
