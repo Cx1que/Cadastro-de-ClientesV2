@@ -16,7 +16,7 @@ class Funcs():
 
         host='localhost',
         user='root',
-        password='caique123',
+        password='',
         database='clientes',
         )
 
